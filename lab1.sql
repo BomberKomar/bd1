@@ -226,6 +226,16 @@ LANGUAGE SQL AS $$
 UPDATE patients SET residential_address_id = new_address_id_arg WHERE id = patient_id_arg;
 $$;
 
+CREATE FUNCTION get_insurance_policy(patient_id_arg INT) RETURNS TABLE(provider TEXT, policy_number TEXT, start_date TIMESTAMP, end_date TIMESTAMP)
+LANGUAGE SQL AS $$
+SELECT provider, policy_number, start_date, end_date FROM InsurancePolicies WHERE patient_id = patient_id_arg;
+$$;
+
+CREATE PROCEDURE record_lab_test_result(test_id_arg INT, result_text TEXT)
+LANGUAGE SQL AS $$
+UPDATE LaboratoryTests SET result = result_text WHERE id = test_id_arg;
+$$;
+
 INSERT INTO specializations(id, name) VALUES (1, 'surgeon');
 INSERT INTO specializations(id, name) VALUES (2, 'nurse');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (1, 'Nazar', 'Vasyliev', 1, '2022-10-10 11:30:30');
