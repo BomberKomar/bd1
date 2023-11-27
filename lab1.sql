@@ -225,9 +225,8 @@ LANGUAGE SQL AS $$
 UPDATE patients SET residential_address_id = new_address_id_arg WHERE id = patient_id_arg;
 $$;
 
-
+INSERT INTO specializations(id, name) VALUES (1, 'surgeon');
+INSERT INTO specializations(id, name) VALUES (2, 'nurse');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (1, 'Nazar', 'Vasyliev', 1, '2022-10-10 11:30:30');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (2, 'Nazar2', 'Vasyliev2', 1, '2023-10-10 11:30:30');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (3, 'Nazar3', 'Vasyliev3', 2, '2022-10-11 11:30:30');
-INSERT INTO specializations(id, specializations.name) VALUES (1, 'surgeon');
-INSERT INTO specializations(id, specializations.name) VALUES (2, 'nurse');
