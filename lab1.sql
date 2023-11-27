@@ -177,12 +177,12 @@ BEGIN
    RETURN NEW;
 END;
 $$;
-CREATE TRIGGER medical_records_before_update_trigger BEFORE UPDATE ON medicalRecords FOR EACH ROW EXECUTE PROCEDURE set_medical_records_updated_at_trigger();
+CREATE TRIGGER medical_records_before_update_trigger BEFORE UPDATE ON "medicalRecords" FOR EACH ROW EXECUTE PROCEDURE set_medical_records_updated_at_trigger();
 
 CREATE FUNCTION calculate_total_payments(patient_id_arg INT) RETURNS REAL
 LANGUAGE SQL AS $$
 SELECT SUM(p.amount) FROM payments AS p 
-INNER JOIN billingAccounts AS ba ON p.billing_account_id = ba.id 
+INNER JOIN "billingAccounts" AS ba ON p.billing_account_id = ba.id 
 WHERE ba.patient_id = patient_id_arg;
 $$;
 
