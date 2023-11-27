@@ -148,11 +148,11 @@ ALTER TABLE "insurancePolicies" ADD FOREIGN KEY ("patient_id") REFERENCES "patie
 
 ALTER TABLE "laboratoryTests" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "laboratoryTests" ADD FOREIGN KEY ("requested_by_doctor_id") REFERENCES "Doctors" ("id");
+ALTER TABLE "laboratoryTests" ADD FOREIGN KEY ("requested_by_doctor_id") REFERENCES "doctors" ("id");
 
-ALTER TABLE "hospitalizations" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "hospitalizations" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "hospitalizations" ADD FOREIGN KEY ("room_id") REFERENCES "HospitalRooms" ("id");
+ALTER TABLE "hospitalizations" ADD FOREIGN KEY ("room_id") REFERENCES "hospitalRooms" ("id");
 
 
 
@@ -177,30 +177,30 @@ BEGIN
    RETURN NEW;
 END;
 $$;
-CREATE TRIGGER medical_records_before_update_trigger BEFORE UPDATE ON MedicalRecords FOR EACH ROW EXECUTE PROCEDURE set_medical_records_updated_at_trigger();
+CREATE TRIGGER medical_records_before_update_trigger BEFORE UPDATE ON medicalRecords FOR EACH ROW EXECUTE PROCEDURE set_medical_records_updated_at_trigger();
 
 CREATE FUNCTION calculate_total_payments(patient_id_arg INT) RETURNS REAL
 LANGUAGE SQL AS $$
-SELECT SUM(p.amount) FROM Payments AS p 
-INNER JOIN BillingAccounts AS ba ON p.billing_account_id = ba.id 
+SELECT SUM(p.amount) FROM payments AS p 
+INNER JOIN billingAccounts AS ba ON p.billing_account_id = ba.id 
 WHERE ba.patient_id = patient_id_arg;
 $$;
 
 CREATE FUNCTION get_current_medications(patient_id_arg INT) RETURNS TABLE(medication_name TEXT, dosage TEXT, duration TEXT)
 LANGUAGE SQL AS $$
-SELECT m.name, p.dosage, p.duration FROM Prescriptions AS p 
-INNER JOIN Medications AS m ON p.medication_id = m.id 
+SELECT m.name, p.dosage, p.duration FROM prescriptions AS p 
+INNER JOIN medications AS m ON p.medication_id = m.id 
 WHERE p.patient_id = patient_id_arg AND p.issue_date > (NOW() - INTERVAL '1 month');
 $$;
 
 CREATE PROCEDURE cancel_appointments_for_doctor(doctor_id_arg INT)
 LANGUAGE SQL AS $$
-UPDATE Appointments SET status = 'cancelled' WHERE doctor_id = doctor_id_arg AND appointment_time > NOW();
+UPDATE appointments SET status = 'cancelled' WHERE doctor_id = doctor_id_arg AND appointment_time > NOW();
 $$;
 
 CREATE FUNCTION find_next_available_appointment(doctor_id_arg INT) RETURNS TIMESTAMP
 LANGUAGE SQL AS $$
-SELECT appointment_time FROM Appointments 
+SELECT appointment_time FROM appointments 
 WHERE doctor_id = doctor_id_arg AND status = 'scheduled' AND appointment_time > NOW() 
 ORDER BY appointment_time ASC LIMIT 1;
 $$;
@@ -209,18 +209,18 @@ CREATE FUNCTION update_last_payment_date_trigger() RETURNS trigger
 LANGUAGE plpgsql AS
 $$
 BEGIN
-   UPDATE BillingAccounts SET last_payment_date = NEW.payment_date WHERE id = NEW.billing_account_id;
+   UPDATE billingAccounts SET last_payment_date = NEW.payment_date WHERE id = NEW.billing_account_id;
    RETURN NEW;
 END;
 $$;
-CREATE TRIGGER payments_after_insert_trigger AFTER INSERT ON Payments FOR EACH ROW EXECUTE PROCEDURE update_last_payment_date_trigger();
+CREATE TRIGGER payments_after_insert_trigger AFTER INSERT ON payments FOR EACH ROW EXECUTE PROCEDURE update_last_payment_date_trigger();
 
 CREATE FUNCTION list_appointments_for_patient(patient_id_arg INT) RETURNS TABLE(appointment_id INT, doctor_id INT, appointment_time TIMESTAMP, status TEXT)
 LANGUAGE SQL AS $$
-SELECT id, doctor_id, appointment_time, status FROM Appointments WHERE patient_id = patient_id_arg ORDER BY appointment_time;
+SELECT id, doctor_id, appointment_time, status FROM appointments WHERE patient_id = patient_id_arg ORDER BY appointment_time;
 $$;
 
 CREATE PROCEDURE update_patient_address(patient_id_arg INT, new_address_id_arg INT)
 LANGUAGE SQL AS $$
-UPDATE Patients SET residential_address_id = new_address_id_arg WHERE id = patient_id_arg;
+UPDATE patients SET residential_address_id = new_address_id_arg WHERE id = patient_id_arg;
 $$;
