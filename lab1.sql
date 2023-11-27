@@ -2,7 +2,7 @@ CREATE DATABASE lab1;
 
 \c lab1;
 
-CREATE TABLE "Patients" (
+CREATE TABLE "patients" (
   "id" serial PRIMARY KEY,
   "first_name" text NOT NULL,
   "last_name" text NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "Patients" (
   "medical_record_number" text UNIQUE NOT NULL
 );
 
-CREATE TABLE "Appointments" (
+CREATE TABLE "appointments" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "doctor_id" int NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE "Appointments" (
   "status" text NOT NULL
 );
 
-CREATE TABLE "Doctors" (
+CREATE TABLE "doctors" (
   "id" serial PRIMARY KEY,
   "first_name" text NOT NULL,
   "last_name" text NOT NULL,
@@ -31,12 +31,12 @@ CREATE TABLE "Doctors" (
   "office_address_id" int
 );
 
-CREATE TABLE "Specializations" (
+CREATE TABLE "specializations" (
   "id" serial PRIMARY KEY,
   "name" text UNIQUE NOT NULL
 );
 
-CREATE TABLE "Prescriptions" (
+CREATE TABLE "prescriptions" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "doctor_id" int NOT NULL,
@@ -46,13 +46,13 @@ CREATE TABLE "Prescriptions" (
   "issue_date" timestamp NOT NULL
 );
 
-CREATE TABLE "Medications" (
+CREATE TABLE "medications" (
   "id" serial PRIMARY KEY,
   "name" text UNIQUE NOT NULL,
   "description" text
 );
 
-CREATE TABLE "Addresses" (
+CREATE TABLE "addresses" (
   "id" serial PRIMARY KEY,
   "country_id" int NOT NULL,
   "city" text NOT NULL,
@@ -60,26 +60,26 @@ CREATE TABLE "Addresses" (
   "zip_code" text NOT NULL
 );
 
-CREATE TABLE "Countries" (
+CREATE TABLE "countries" (
   "id" serial PRIMARY KEY,
   "name" text UNIQUE NOT NULL
 );
 
-CREATE TABLE "MedicalRecords" (
+CREATE TABLE "medicalRecords" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "record_text" text NOT NULL,
   "creation_date" timestamp NOT NULL DEFAULT 'now()'
 );
 
-CREATE TABLE "BillingAccounts" (
+CREATE TABLE "billingAccounts" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "balance" real NOT NULL,
   "last_payment_date" timestamp
 );
 
-CREATE TABLE "Payments" (
+CREATE TABLE "payments" (
   "id" serial PRIMARY KEY,
   "billing_account_id" int NOT NULL,
   "amount" real NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE "Payments" (
   "method" text NOT NULL
 );
 
-CREATE TABLE "InsurancePolicies" (
+CREATE TABLE "insurancePolicies" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "provider" text NOT NULL,
@@ -96,7 +96,7 @@ CREATE TABLE "InsurancePolicies" (
   "end_date" timestamp
 );
 
-CREATE TABLE "LaboratoryTests" (
+CREATE TABLE "laboratoryTests" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "test_type" text NOT NULL,
@@ -105,14 +105,14 @@ CREATE TABLE "LaboratoryTests" (
   "test_date" timestamp NOT NULL
 );
 
-CREATE TABLE "HospitalRooms" (
+CREATE TABLE "hospitalRooms" (
   "id" serial PRIMARY KEY,
   "room_number" text NOT NULL,
   "type" text NOT NULL,
   "status" text NOT NULL
 );
 
-CREATE TABLE "Hospitalizations" (
+CREATE TABLE "hospitalizations" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "room_id" int NOT NULL,
@@ -120,53 +120,53 @@ CREATE TABLE "Hospitalizations" (
   "discharge_date" timestamp
 );
 
-ALTER TABLE "Patients" ADD FOREIGN KEY ("residential_address_id") REFERENCES "Addresses" ("id");
+ALTER TABLE "patients" ADD FOREIGN KEY ("residential_address_id") REFERENCES "addresses" ("id");
 
-ALTER TABLE "Appointments" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "appointments" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "Appointments" ADD FOREIGN KEY ("doctor_id") REFERENCES "Doctors" ("id");
+ALTER TABLE "appointments" ADD FOREIGN KEY ("doctor_id") REFERENCES "doctors" ("id");
 
-ALTER TABLE "Doctors" ADD FOREIGN KEY ("specialization_id") REFERENCES "Specializations" ("id");
+ALTER TABLE "doctors" ADD FOREIGN KEY ("specialization_id") REFERENCES "specializations" ("id");
 
-ALTER TABLE "Doctors" ADD FOREIGN KEY ("office_address_id") REFERENCES "Addresses" ("id");
+ALTER TABLE "doctors" ADD FOREIGN KEY ("office_address_id") REFERENCES "addresses" ("id");
 
-ALTER TABLE "Prescriptions" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "prescriptions" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "Prescriptions" ADD FOREIGN KEY ("doctor_id") REFERENCES "Doctors" ("id");
+ALTER TABLE "prescriptions" ADD FOREIGN KEY ("doctor_id") REFERENCES "doctors" ("id");
 
-ALTER TABLE "Prescriptions" ADD FOREIGN KEY ("medication_id") REFERENCES "Medications" ("id");
+ALTER TABLE "prescriptions" ADD FOREIGN KEY ("medication_id") REFERENCES "medications" ("id");
 
-ALTER TABLE "Addresses" ADD FOREIGN KEY ("country_id") REFERENCES "Countries" ("id");
+ALTER TABLE "addresses" ADD FOREIGN KEY ("country_id") REFERENCES "countries" ("id");
 
-ALTER TABLE "MedicalRecords" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "medicalRecords" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "BillingAccounts" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "billingAccounts" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "Payments" ADD FOREIGN KEY ("billing_account_id") REFERENCES "BillingAccounts" ("id");
+ALTER TABLE "payments" ADD FOREIGN KEY ("billing_account_id") REFERENCES "billingAccounts" ("id");
 
-ALTER TABLE "InsurancePolicies" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "insurancePolicies" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "LaboratoryTests" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "laboratoryTests" ADD FOREIGN KEY ("patient_id") REFERENCES "patients" ("id");
 
-ALTER TABLE "LaboratoryTests" ADD FOREIGN KEY ("requested_by_doctor_id") REFERENCES "Doctors" ("id");
+ALTER TABLE "laboratoryTests" ADD FOREIGN KEY ("requested_by_doctor_id") REFERENCES "Doctors" ("id");
 
-ALTER TABLE "Hospitalizations" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
+ALTER TABLE "hospitalizations" ADD FOREIGN KEY ("patient_id") REFERENCES "Patients" ("id");
 
-ALTER TABLE "Hospitalizations" ADD FOREIGN KEY ("room_id") REFERENCES "HospitalRooms" ("id");
+ALTER TABLE "hospitalizations" ADD FOREIGN KEY ("room_id") REFERENCES "HospitalRooms" ("id");
 
 
 
 
 CREATE FUNCTION find_doctor_specialization(doctor_id_arg INT) RETURNS TEXT
 LANGUAGE SQL AS $$
-SELECT name FROM Specializations WHERE id = (
-    SELECT specialization_id FROM Doctors WHERE id = doctor_id_arg
+SELECT specializations.name FROM specializations WHERE id = (
+    SELECT specialization_id FROM doctors WHERE id = doctor_id_arg
 );
 $$;
 
 CREATE PROCEDURE discharge_patients_from_room(room_id_arg INT)
 LANGUAGE SQL AS $$
-UPDATE Hospitalizations SET discharge_date = NOW() WHERE room_id = room_id_arg AND discharge_date IS NULL;
+UPDATE hospitalizations SET discharge_date = NOW() WHERE room_id = room_id_arg AND discharge_date IS NULL;
 $$;
 
 CREATE FUNCTION set_medical_records_updated_at_trigger() RETURNS trigger
