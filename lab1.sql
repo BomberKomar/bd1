@@ -69,7 +69,8 @@ CREATE TABLE "medicalRecords" (
   "id" serial PRIMARY KEY,
   "patient_id" int NOT NULL,
   "record_text" text NOT NULL,
-  "creation_date" timestamp NOT NULL DEFAULT 'now()'
+  "creation_date" timestamp NOT NULL DEFAULT 'now()',
+  "updated_at" timestamp
 );
 
 CREATE TABLE "billingAccounts" (
@@ -209,7 +210,7 @@ CREATE FUNCTION update_last_payment_date_trigger() RETURNS trigger
 LANGUAGE plpgsql AS
 $$
 BEGIN
-   UPDATE billingAccounts SET last_payment_date = NEW.payment_date WHERE id = NEW.billing_account_id;
+   UPDATE "billingAccounts" SET last_payment_date = NEW.payment_date WHERE id = NEW.billing_account_id;
    RETURN NEW;
 END;
 $$;
@@ -230,3 +231,30 @@ INSERT INTO specializations(id, name) VALUES (2, 'nurse');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (1, 'Nazar', 'Vasyliev', 1, '2022-10-10 11:30:30');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (2, 'Nazar2', 'Vasyliev2', 1, '2023-10-10 11:30:30');
 INSERT INTO doctors(id, first_name, last_name,specialization_id, employment_date) VALUES (3, 'Nazar3', 'Vasyliev3', 2, '2022-10-11 11:30:30');
+INSERT INTO countries (id, name) VALUES (1, 'United States');
+INSERT INTO countries (id, name) VALUES (2, 'United Kingdom');
+INSERT INTO addresses (id, country_id, city, street, zip_code) VALUES (1, 1, 'New York', '123 Main St', '10001');
+INSERT INTO addresses (id, country_id, city, street, zip_code) VALUES (2, 2, 'London', '456 Side St', 'N1 5AA');
+INSERT INTO patients (id, first_name, last_name, date_of_birth, gender, residential_address_id, medical_record_number) VALUES (1, 'John', 'Doe', '1980-01-01', 'Male', 1, 'MRN12345');
+INSERT INTO patients (id, first_name, last_name, date_of_birth, gender, residential_address_id, medical_record_number) VALUES (2, 'Jane', 'Smith', '1990-02-02', 'Female', 2, 'MRN54321');
+INSERT INTO medications (id, name, description) VALUES (1, 'MedicationA', 'Description of MedicationA');
+INSERT INTO medications (id, name, description) VALUES (2, 'MedicationB', 'Description of MedicationB');
+INSERT INTO prescriptions (id, patient_id, doctor_id, medication_id, dosage, duration, issue_date) VALUES (1, 1, 1, 1, '10mg', '30 days', NOW());
+INSERT INTO prescriptions (id, patient_id, doctor_id, medication_id, dosage, duration, issue_date) VALUES (2, 2, 2, 2, '20mg', '60 days', NOW());
+INSERT INTO appointments (id, patient_id, doctor_id, appointment_time, status) VALUES (1, 1, 1, '2023-12-01 10:00:00', 'Scheduled');
+INSERT INTO appointments (id, patient_id, doctor_id, appointment_time, status) VALUES (2, 2, 2, '2023-12-02 11:00:00', 'Scheduled');
+INSERT INTO "billingAccounts" (id, patient_id, balance, last_payment_date) VALUES (1, 1, 100.00, NOW());
+INSERT INTO "billingAccounts" (id, patient_id, balance, last_payment_date) VALUES (2, 2, 200.00, NOW());
+INSERT INTO payments (id, billing_account_id, amount, payment_date, method) VALUES (1, 1, 50.00, NOW(), 'Credit Card');
+INSERT INTO payments (id, billing_account_id, amount, payment_date, method) VALUES (2, 2, 75.00, NOW(), 'Debit Card');
+INSERT INTO "insurancePolicies" (id, patient_id, provider, policy_number, start_date, end_date) VALUES (1, 1, 'Insurance Co A', 'POLICY123', '2023-01-01', '2024-01-01');
+INSERT INTO "insurancePolicies" (id, patient_id, provider, policy_number, start_date, end_date) VALUES (2, 2, 'Insurance Co B', 'POLICY456', '2023-02-01', '2024-02-01');
+INSERT INTO "laboratoryTests" (id, patient_id, test_type, requested_by_doctor_id, test_date) VALUES (1, 1, 'Blood Test', 1, NOW());
+INSERT INTO "laboratoryTests" (id, patient_id, test_type, requested_by_doctor_id, test_date) VALUES (2, 2, 'X-Ray', 2, NOW());
+INSERT INTO "hospitalRooms" (id, room_number, type, status) VALUES (1, '101', 'Standard', 'Available');
+INSERT INTO "hospitalRooms" (id, room_number, type, status) VALUES (2, '102', 'Deluxe', 'Occupied');
+INSERT INTO hospitalizations (id, patient_id, room_id, admission_date, discharge_date) VALUES (1, 1, 1, NOW(), NULL);
+INSERT INTO hospitalizations (id, patient_id, room_id, admission_date, discharge_date) VALUES (2, 2, 2, NOW(), NULL);
+INSERT INTO "medicalRecords" (id, patient_id, record_text, creation_date) VALUES (1, 1, 'Patient has a history of allergies.', NOW());
+INSERT INTO "medicalRecords" (id, patient_id, record_text, creation_date) VALUES (2, 1, 'Follow-up required for previous consultation.', NOW());
+INSERT INTO "medicalRecords" (id, patient_id, record_text, creation_date) VALUES (3, 2, 'Patient undergoing treatment for hypertension.', NOW());
