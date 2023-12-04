@@ -228,12 +228,12 @@ $$;
 
 CREATE FUNCTION get_insurance_policy(patient_id_arg INT) RETURNS TABLE(provider TEXT, policy_number TEXT, start_date TIMESTAMP, end_date TIMESTAMP)
 LANGUAGE SQL AS $$
-SELECT provider, policy_number, start_date, end_date FROM InsurancePolicies WHERE patient_id = patient_id_arg;
+SELECT provider, policy_number, start_date, end_date FROM "insurancePolicies" WHERE patient_id = patient_id_arg;
 $$;
 
 CREATE PROCEDURE record_lab_test_result(test_id_arg INT, result_text TEXT)
 LANGUAGE SQL AS $$
-UPDATE LaboratoryTests SET result = result_text WHERE id = test_id_arg;
+UPDATE "laboratoryTests" SET result = result_text WHERE id = test_id_arg;
 $$;
 
 INSERT INTO specializations(id, name) VALUES (1, 'surgeon');
